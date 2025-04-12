@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import LandingPage from './components/LandingPage';
 import LocationPage from './components/LocationPage';
+import Services from './components/Services/Services';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/locations" element={<LocationPage />} />
+          <Route path="/services" element={<Services />} />
         </Routes>
       </div>
     </Router>

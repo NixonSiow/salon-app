@@ -1,0 +1,16 @@
+.service-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 0.5rem;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    .service-list {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+    }
+}

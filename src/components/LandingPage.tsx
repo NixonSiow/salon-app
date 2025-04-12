@@ -23,7 +23,7 @@ const LandingPage: React.FC = () => {
                             <Nav.Link href="#home" className="text-light">HOME</Nav.Link>
                             <Nav.Link href="#offers" className="text-light">OFFERS</Nav.Link>
                             <Nav.Link href="#gallery" className="text-light">GALLERY</Nav.Link>
-                            <Nav.Link href="#services" className="text-light">SERVICES</Nav.Link>
+                            <Link to="/services" className="nav-link text-light">SERVICES</Link>
                             <Link to="/locations" className="nav-link text-light">LOCATIONS</Link>
                         </Nav>
                     </Navbar.Collapse>

@@ -1,0 +1,78 @@
+.service-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.service-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.service-content {
+    padding: 1.5rem;
+}
+
+.service-name {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+}
+
+.service-description {
+    color: #999;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.service-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.service-duration {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.service-price {
+    font-weight: bold;
+    color: #e84c6b;
+    font-size: 1.2rem;
+}
+
+.book-button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #e84c6b;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.book-button:hover {
+    background-color: #d63d5c;
+    transform: translateY(-2px);
+}
