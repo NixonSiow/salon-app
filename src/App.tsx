@@ -5,6 +5,7 @@ import './App.css';
 import LandingPage from './components/LandingPage';
 import LocationPage from './components/LocationPage';
 import Services from './components/Services/Services';
+import Gallery from './components/Gallery';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/locations" element={<LocationPage />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/gallery" element={<Gallery />} />
         </Routes>
       </div>
     </Router>

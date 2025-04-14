@@ -85,6 +85,71 @@ h1 {
     transform: translateY(-2px);
 }
 
+.user-icon-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    margin-left: 0.5rem;
+    color: white !important;
+    text-decoration: none;
+}
+
+.user-icon-btn:hover {
+    transform: scale(1.1);
+    color: #e84c6b !important;
+}
+
+/* Modal Styles */
+.modal-content {
+    background-color: #2a2a2a;
+    color: white;
+}
+
+.modal-header {
+    border-bottom: 1px solid #404040;
+}
+
+.modal-footer {
+    border-top: 1px solid #404040;
+}
+
+.form-control {
+    background-color: #333;
+    border: 1px solid #404040;
+    color: white;
+}
+
+.form-control:focus {
+    background-color: #404040;
+    border-color: #e84c6b;
+    color: white;
+    box-shadow: 0 0 0 0.25rem rgba(232, 76, 107, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: #e84c6b;
+    border-color: #e84c6b;
+}
+
+.modal .btn-primary {
+    background-color: #e84c6b;
+    border: none;
+}
+
+.modal .btn-primary:hover {
+    background-color: #d63d5c;
+}
+
+.modal .btn-link {
+    color: #e84c6b;
+}
+
+.modal .btn-link:hover {
+    color: #d63d5c;
+}
+
 @media (max-width: 1200px) {
     .text-section {
         max-width: 50%;

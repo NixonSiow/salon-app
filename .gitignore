@@ -25,3 +25,5 @@ yarn-error.log*
 # IDE
 .idea/
 .vscode/
+
+src/firebase.js
