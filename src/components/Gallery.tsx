@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Spinner, Alert, Button } from 'react-bootstrap';
 import { storage } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
+import { Link } from 'react-router-dom';
 import './Gallery.css';
 
 const Gallery: React.FC = () => {
@@ -75,6 +76,17 @@ const Gallery: React.FC = () => {
 
     return (
         <div className="gallery-page">
+            <div className="home-button-container">
+                <Link to="/" className="home-button">
+                    <img
+                        src="/barber.png"
+                        alt="SilveryCutSalon"
+                        height="40"
+                        className="d-inline-block align-top"
+                    />
+                    {' '}SilveryCut Salon
+                </Link>
+            </div>
             <Container className="py-5">
                 <h1 className="text-center mb-5">Our Gallery</h1>
 

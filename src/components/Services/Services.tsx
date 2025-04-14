@@ -6,15 +6,15 @@ import ServiceList from './ServiceList';
 const Services: React.FC = () => {
     return (
         <div className="services-container">
-            <div className="services-header">
-                <Link to="/" className="logo-link">
+            <div className="home-button-container">
+                <Link to="/" className="home-button">
                     <img
                         src="/barber.png"
                         alt="SilveryCutSalon"
                         height="40"
-                        className="logo-image"
+                        className="d-inline-block align-top"
                     />
-                    <span className="logo-text">SilveryCut Salon</span>
+                    {' '}SilveryCut Salon
                 </Link>
             </div>
             <h1 className="services-title">Our Services</h1>
