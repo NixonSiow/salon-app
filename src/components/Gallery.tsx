@@ -8,81 +8,60 @@ const Gallery: React.FC = () => {
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [debugInfo, setDebugInfo] = useState<string[]>([]);
-
-    // Function to add debug information
-    const addDebugInfo = (message: string) => {
-        console.log(message);
-        setDebugInfo(prev => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]}: ${message}`]);
-    };
 
     useEffect(() => {
-        // Set a timeout to prevent infinite loading
-        const timeoutId = setTimeout(() => {
-            if (loading) {
-                addDebugInfo('Operation timed out after 15 seconds');
-                setError('The operation timed out. This could be due to Firebase Storage permissions or network issues.');
-                setLoading(false);
-            }
-        }, 15000); // 15 seconds timeout
-
         const fetchImages = async () => {
             try {
                 setLoading(true);
-                setDebugInfo([]);
-                addDebugInfo('Starting to fetch images from Firebase Storage...');
+                setError(null);
 
                 // Create a reference to the gallery folder
                 const galleryRef = ref(storage, 'gallery/');
-                addDebugInfo('Created reference to gallery folder');
 
                 // List all items in the gallery folder
                 const result = await listAll(galleryRef);
-                addDebugInfo(`Found ${result.items.length} items in the gallery folder`);
 
                 if (result.items.length === 0) {
-                    addDebugInfo('No images found in the gallery folder');
                     setError('No images found in the gallery folder. Please upload some images to Firebase Storage.');
                     setLoading(false);
                     return;
                 }
 
-                // Get download URLs for all items
-                const imageUrls: string[] = [];
-
-                for (const item of result.items) {
+                // Process all items in parallel for better performance
+                const urlPromises = result.items.map(async (item) => {
                     try {
                         const url = await getDownloadURL(item);
-                        addDebugInfo(`Got download URL for: ${item.name}`);
-                        imageUrls.push(url);
-                    } catch (err: any) {
-                        addDebugInfo(`Error getting download URL for ${item.name}: ${err.message}`);
-                        // Continue with the next image even if this one fails
+                        return { name: item.name, url };
+                    } catch (err) {
+                        return { name: item.name, url: null };
                     }
-                }
+                });
+
+                // Wait for all promises to resolve
+                const urlResults = await Promise.all(urlPromises);
+
+                // Filter out any items that failed to get a URL
+                const validUrls = urlResults
+                    .filter(item => item.url !== null)
+                    .map(item => item.url as string);
 
                 // Set the images
-                setImages(imageUrls);
-                addDebugInfo(`Successfully got ${imageUrls.length} download URLs`);
+                setImages(validUrls);
 
                 // If we found no images, set an error
-                if (imageUrls.length === 0) {
+                if (validUrls.length === 0) {
                     setError('No images could be loaded. Please check if the images exist in Firebase Storage.');
                 }
 
                 setLoading(false);
-            } catch (err: any) {
+            } catch (err) {
                 console.error('Error fetching images:', err);
-                addDebugInfo(`Error in fetchImages: ${err.message}`);
-                setError(`Failed to fetch images: ${err.message}`);
+                setError('Failed to fetch images. Please try again later.');
                 setLoading(false);
             }
         };
 
         fetchImages();
-
-        // Clean up the timeout
-        return () => clearTimeout(timeoutId);
     }, []);
 
     // Function to retry loading images
@@ -105,16 +84,6 @@ const Gallery: React.FC = () => {
                             <span className="visually-hidden">Loading...</span>
                         </Spinner>
                         <p className="mt-3">Loading gallery images...</p>
-
-                        {/* Debug information */}
-                        {debugInfo.length > 0 && (
-                            <div className="mt-4 text-start">
-                                <h5>Debug Information:</h5>
-                                <pre className="bg-dark text-light p-3 rounded" style={{ maxHeight: '200px', overflow: 'auto' }}>
-                                    {debugInfo.join('\n')}
-                                </pre>
-                            </div>
-                        )}
                     </div>
                 ) : error ? (
                     <Alert variant="danger" className="text-center">
@@ -139,16 +108,6 @@ service firebase.storage {
                         <Button variant="primary" className="mt-3" onClick={retryLoading}>
                             Retry Loading
                         </Button>
-
-                        {/* Debug information */}
-                        {debugInfo.length > 0 && (
-                            <div className="mt-4 text-start">
-                                <h5>Debug Information:</h5>
-                                <pre className="bg-dark text-light p-3 rounded" style={{ maxHeight: '200px', overflow: 'auto' }}>
-                                    {debugInfo.join('\n')}
-                                </pre>
-                            </div>
-                        )}
                     </Alert>
                 ) : images.length === 0 ? (
                     <div className="text-center">
@@ -169,7 +128,6 @@ service firebase.storage {
                                         alt={`Gallery image ${index + 1}`}
                                         className="gallery-image"
                                         onError={(e) => {
-                                            console.error(`Error loading image: ${url}`);
                                             e.currentTarget.src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
                                         }}
                                     />
