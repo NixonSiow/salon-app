@@ -3,10 +3,12 @@ import { Container, Nav, Navbar, Button, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import BookingModal from './BookingModal';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showBookingModal, setShowBookingModal] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -49,11 +51,21 @@ const LandingPage: React.FC = () => {
         }
     };
 
+    const handleBookingClick = () => {
+        if (user) {
+            // Navigate to booking page for logged-in users
+            window.location.href = '/booking';
+        } else {
+            // Show booking modal for non-logged-in users
+            setShowBookingModal(true);
+        }
+    };
+
     return (
         <div className="landing-page">
-            <Navbar bg="transparent" expand="lg" className="custom-navbar">
+            <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
                 <Container>
-                    <Navbar.Brand href="#home" className="text-light">
+                    <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
                         <img
                             src="/barber.png"
                             alt="SilveryCutSalon"
@@ -65,11 +77,11 @@ const LandingPage: React.FC = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="ms-auto">
-                            <Nav.Link href="#home" className="text-light">HOME</Nav.Link>
-                            <Link to="/offers" className="nav-link text-light">OFFERS</Link>
-                            <Link to="/gallery" className="nav-link text-light">GALLERY</Link>
-                            <Link to="/services" className="nav-link text-light">SERVICES</Link>
-                            <Link to="/locations" className="nav-link text-light">LOCATIONS</Link>
+                            <Nav.Link as={Link} to="/services" className="text-light">SERVICES</Nav.Link>
+                            <Nav.Link as={Link} to="/offers" className="text-light">OFFERS</Nav.Link>
+                            <Nav.Link as={Link} to="/gallery" className="text-light">GALLERY</Nav.Link>
+                            <Nav.Link as={Link} to="/locations" className="text-light">LOCATIONS</Nav.Link>
+
                             {user ? (
                                 <>
                                     <Link to="/booking" className="nav-link text-light">BOOKING</Link>
@@ -147,20 +159,19 @@ const LandingPage: React.FC = () => {
                         <p className="description">
                             SilveryCut Salon is where elegance meets artistry. We offer premium hair services in a serene, upscale setting—because your hair deserves nothing less than luxury. Indulge in personalized care, expert styling, and flawless results.
                         </p>
-                        {user ? (
-                            <Link to="/booking">
-                                <Button variant="primary" className="book-now-btn">BOOK NOW</Button>
-                            </Link>
-                        ) : (
-                            <Button variant="primary" className="book-now-btn" onClick={handleShow}>
-                                LOGIN TO BOOK
-                            </Button>
-                        )}
+                        <Button variant="primary" className="book-now-btn" onClick={handleBookingClick}>
+                            {user ? 'BOOK NOW' : 'BOOK APPOINTMENT'}
+                        </Button>
                     </div>
                     <div className="image-section">
                     </div>
                 </div>
             </Container>
+
+            <BookingModal
+                show={showBookingModal}
+                onHide={() => setShowBookingModal(false)}
+            />
         </div>
     );
 };

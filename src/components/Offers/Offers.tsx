@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import BookingModal from '../BookingModal';
 import './Offers.css';
 
 const Offers: React.FC = () => {
+    const [showBookingModal, setShowBookingModal] = useState(false);
+    const [selectedService, setSelectedService] = useState<string>('');
+
+    const handleBookingClick = (serviceName: string) => {
+        setSelectedService(serviceName);
+        setShowBookingModal(true);
+    };
+
     return (
         <div className="offers-container">
             <div className="home-button-container">
@@ -43,7 +52,13 @@ const Offers: React.FC = () => {
                                     <span className="original-price">RM 80</span>
                                     <span className="discounted-price">RM 64</span>
                                 </div>
-                                <Button variant="outline-light" className="book-now-btn">Book Now</Button>
+                                <Button
+                                    variant="outline-light"
+                                    className="book-now-btn"
+                                    onClick={() => handleBookingClick('Hair Cutting Special')}
+                                >
+                                    Book Now
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -64,7 +79,13 @@ const Offers: React.FC = () => {
                                     <span className="original-price">RM 250</span>
                                     <span className="discounted-price">RM 187</span>
                                 </div>
-                                <Button variant="outline-light" className="book-now-btn">Book Now</Button>
+                                <Button
+                                    variant="outline-light"
+                                    className="book-now-btn"
+                                    onClick={() => handleBookingClick('Hair Coloring Package')}
+                                >
+                                    Book Now
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -86,7 +107,13 @@ const Offers: React.FC = () => {
                                     <span className="original-price">RM 120</span>
                                     <span className="discounted-price">RM 84</span>
                                 </div>
-                                <Button variant="outline-light" className="book-now-btn">Book Now</Button>
+                                <Button
+                                    variant="outline-light"
+                                    className="book-now-btn"
+                                    onClick={() => handleBookingClick('Manicure Deluxe')}
+                                >
+                                    Book Now
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -108,7 +135,13 @@ const Offers: React.FC = () => {
                                     <span className="original-price">RM 150</span>
                                     <span className="discounted-price">RM 105</span>
                                 </div>
-                                <Button variant="outline-light" className="book-now-btn">Book Now</Button>
+                                <Button
+                                    variant="outline-light"
+                                    className="book-now-btn"
+                                    onClick={() => handleBookingClick('Pedicure Deluxe')}
+                                >
+                                    Book Now
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -119,6 +152,12 @@ const Offers: React.FC = () => {
                     <p>* Please book in advance to secure your appointment.</p>
                 </div>
             </Container>
+
+            <BookingModal
+                show={showBookingModal}
+                onHide={() => setShowBookingModal(false)}
+                serviceType={selectedService}
+            />
         </div>
     );
 };
