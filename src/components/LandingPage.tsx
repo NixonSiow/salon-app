@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Nav, Navbar, Button, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
@@ -10,7 +10,6 @@ const LandingPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isSignUp, setIsSignUp] = useState(false);
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
@@ -35,20 +34,11 @@ const LandingPage: React.FC = () => {
         setError('');
 
         try {
-            if (isSignUp) {
-                await createUserWithEmailAndPassword(auth, email, password);
-            } else {
-                await signInWithEmailAndPassword(auth, email, password);
-            }
+            await signInWithEmailAndPassword(auth, email, password);
             handleClose();
         } catch (error: any) {
             setError(error.message);
         }
-    };
-
-    const toggleAuthMode = () => {
-        setIsSignUp(!isSignUp);
-        setError('');
     };
 
     const handleLogout = async () => {
@@ -107,7 +97,7 @@ const LandingPage: React.FC = () => {
 
             <Modal show={showLoginModal} onHide={handleClose} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>{isSignUp ? 'Sign Up' : 'Login'}</Modal.Title>
+                    <Modal.Title>Login</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {error && <div className="alert alert-danger">{error}</div>}
@@ -135,14 +125,14 @@ const LandingPage: React.FC = () => {
                         </Form.Group>
 
                         <Button variant="primary" className="w-100" type="submit">
-                            {isSignUp ? 'Sign Up' : 'Login'}
+                            Login
                         </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="link" className="text-decoration-none" onClick={toggleAuthMode}>
-                        {isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
-                    </Button>
+                    <div className="w-100 text-center">
+                        <p className="text-muted">Please contact the salon for account creation</p>
+                    </div>
                 </Modal.Footer>
             </Modal>
 

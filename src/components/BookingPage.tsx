@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
-import axios from 'axios';
 import './BookingPage.css';
 
 interface Booking {
@@ -22,6 +21,9 @@ const BookingPage: React.FC = () => {
         booking_datetime: '',
         contact_info: ''
     });
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     const serviceTypes = [
         'Haircut',
@@ -47,27 +49,54 @@ const BookingPage: React.FC = () => {
     }, [navigate]);
 
     const fetchBookings = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            const response = await axios.get('https://3f50e881-ad66-4834-9311-f7f4dbdce99a-00-vm40553jknlf.sisko.replit.dev/api/bookings');
-            setBookings(response.data);
+            const response = await fetch('YOUR_REPLIT_API_URL/api/bookings');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setBookings(data);
         } catch (error) {
             console.error('Error fetching bookings:', error);
+            setError('Failed to fetch bookings. Please try again later.');
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
         try {
-            await axios.post('https://3f50e881-ad66-4834-9311-f7f4dbdce99a-00-vm40553jknlf.sisko.replit.dev//api/bookings', formData);
-            fetchBookings();
+            const response = await fetch('YOUR_REPLIT_API_URL/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            await fetchBookings();
             setFormData({
                 customer_name: '',
                 service_type: '',
                 booking_datetime: '',
                 contact_info: ''
             });
+            setSuccess('Booking created successfully!');
         } catch (error) {
             console.error('Error creating booking:', error);
+            setError('Failed to create booking. Please try again later.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -78,9 +107,35 @@ const BookingPage: React.FC = () => {
         });
     };
 
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
     return (
         <div className="booking-container">
+            <div className="booking-header">
+                <Link to="/" className="logo-link">
+                    <img
+                        src="/barber.png"
+                        alt="SilveryCutSalon"
+                        height="40"
+                        className="booking-logo"
+                    />
+                    <span className="logo-text">SilveryCut Salon</span>
+                </Link>
+            </div>
+
             <h2>Book an Appointment</h2>
+            {error && <div className="alert alert-danger">{error}</div>}
+            {success && <div className="alert alert-success">{success}</div>}
             <form onSubmit={handleSubmit} className="booking-form">
                 <div className="form-group">
                     <label htmlFor="customer_name">Name:</label>
@@ -91,6 +146,7 @@ const BookingPage: React.FC = () => {
                         value={formData.customer_name}
                         onChange={handleChange}
                         required
+                        placeholder="Enter your full name"
                     />
                 </div>
 
@@ -133,22 +189,31 @@ const BookingPage: React.FC = () => {
                         value={formData.contact_info}
                         onChange={handleChange}
                         required
+                        placeholder="Phone number or email"
                     />
                 </div>
 
-                <button type="submit" className="submit-btn">Book Appointment</button>
+                <button type="submit" className="submit-btn" disabled={loading}>
+                    {loading ? 'Processing...' : 'Book Appointment'}
+                </button>
             </form>
 
             <div className="bookings-list">
                 <h3>Your Bookings</h3>
-                {bookings.map((booking) => (
-                    <div key={booking.id} className="booking-card">
-                        <h4>{booking.service_type}</h4>
-                        <p>Name: {booking.customer_name}</p>
-                        <p>Date: {new Date(booking.booking_datetime).toLocaleString()}</p>
-                        <p>Contact: {booking.contact_info}</p>
-                    </div>
-                ))}
+                {loading ? (
+                    <p>Loading bookings...</p>
+                ) : bookings.length === 0 ? (
+                    <p>No bookings found.</p>
+                ) : (
+                    bookings.map((booking) => (
+                        <div key={booking.id} className="booking-card">
+                            <h4>{booking.service_type}</h4>
+                            <p><strong>Name:</strong> {booking.customer_name}</p>
+                            <p><strong>Date:</strong> {formatDate(booking.booking_datetime)}</p>
+                            <p><strong>Contact:</strong> {booking.contact_info}</p>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );
