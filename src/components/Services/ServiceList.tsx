@@ -13,7 +13,7 @@ const services = [
         name: 'Haircut & Styling',
         description: 'Professional haircut and styling service tailored to your preferences',
         duration: '60 min',
-        price: '$50',
+        price: 'RM 80',
         image: haircutImage
     },
     {
@@ -21,7 +21,7 @@ const services = [
         name: 'Hair Coloring',
         description: 'Full color, highlights, or balayage services',
         duration: '120 min',
-        price: '$120',
+        price: 'RM 250',
         image: coloringImage
     },
     {
@@ -29,7 +29,7 @@ const services = [
         name: 'Manicure',
         description: 'Classic manicure with polish application',
         duration: '45 min',
-        price: '$35',
+        price: 'RM 120',
         image: manicureImage
     },
     {
@@ -37,7 +37,7 @@ const services = [
         name: 'Pedicure',
         description: 'Relaxing pedicure with massage and scrub',
         duration: '60 min',
-        price: '$45',
+        price: 'RM 150',
         image: pedicureImage
     }
 ];
