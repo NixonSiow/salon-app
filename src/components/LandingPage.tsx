@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Nav, Navbar, Button, Modal, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
@@ -11,6 +11,15 @@ const LandingPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleClose = () => {
         setShowLoginModal(false);
@@ -42,6 +51,14 @@ const LandingPage: React.FC = () => {
         setError('');
     };
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    };
+
     return (
         <div className="landing-page">
             <Navbar bg="transparent" expand="lg" className="custom-navbar">
@@ -63,13 +80,26 @@ const LandingPage: React.FC = () => {
                             <Link to="/gallery" className="nav-link text-light">GALLERY</Link>
                             <Link to="/services" className="nav-link text-light">SERVICES</Link>
                             <Link to="/locations" className="nav-link text-light">LOCATIONS</Link>
-                            <Button
-                                variant="link"
-                                className="text-light user-icon-btn"
-                                onClick={handleShow}
-                            >
-                                <i className="bi bi-person-circle"></i>
-                            </Button>
+                            {user ? (
+                                <>
+                                    <Link to="/booking" className="nav-link text-light">BOOKING</Link>
+                                    <Button
+                                        variant="link"
+                                        className="text-light user-icon-btn"
+                                        onClick={handleLogout}
+                                    >
+                                        <i className="bi bi-box-arrow-right"></i> Logout
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button
+                                    variant="link"
+                                    className="text-light user-icon-btn"
+                                    onClick={handleShow}
+                                >
+                                    <i className="bi bi-person-circle"></i> Login
+                                </Button>
+                            )}
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -127,9 +157,15 @@ const LandingPage: React.FC = () => {
                         <p className="description">
                             SilveryCut Salon is where elegance meets artistry. We offer premium hair services in a serene, upscale setting—because your hair deserves nothing less than luxury. Indulge in personalized care, expert styling, and flawless results.
                         </p>
-                        <Link to="/services">
-                            <Button variant="primary" className="book-now-btn">BOOK NOW</Button>
-                        </Link>
+                        {user ? (
+                            <Link to="/booking">
+                                <Button variant="primary" className="book-now-btn">BOOK NOW</Button>
+                            </Link>
+                        ) : (
+                            <Button variant="primary" className="book-now-btn" onClick={handleShow}>
+                                LOGIN TO BOOK
+                            </Button>
+                        )}
                     </div>
                     <div className="image-section">
                     </div>
