@@ -25,6 +25,7 @@ const BookingPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
 
     const serviceTypes = [
         'Haircut',
@@ -67,6 +68,44 @@ const BookingPage: React.FC = () => {
         }
     };
 
+    const handleEdit = (booking: Booking) => {
+        setEditingBooking(booking);
+        setFormData({
+            customer_name: booking.customer_name,
+            service_type: booking.service_type,
+            booking_datetime: booking.booking_datetime.slice(0, 16), // Format for datetime-local input
+            contact_info: booking.contact_info
+        });
+        // Scroll to form
+        document.querySelector('.booking-form')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const handleDelete = async (bookingId: number) => {
+        if (!window.confirm('Are you sure you want to delete this booking?')) {
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${ENDPOINTS.BOOKINGS}/${bookingId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            await fetchBookings();
+            setSuccess('Booking deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting booking:', error);
+            setError('Failed to delete booking. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -74,8 +113,12 @@ const BookingPage: React.FC = () => {
         setSuccess(null);
         console.log('Submitting to endpoint:', ENDPOINTS.BOOKINGS);
         try {
-            const response = await fetch(ENDPOINTS.BOOKINGS, {
-                method: 'POST',
+            const url = editingBooking
+                ? `${ENDPOINTS.BOOKINGS}/${editingBooking.id}`
+                : ENDPOINTS.BOOKINGS;
+
+            const response = await fetch(url, {
+                method: editingBooking ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -94,10 +137,11 @@ const BookingPage: React.FC = () => {
                 booking_datetime: '',
                 contact_info: ''
             });
-            setSuccess('Booking created successfully!');
+            setEditingBooking(null);
+            setSuccess(editingBooking ? 'Booking updated successfully!' : 'Booking created successfully!');
         } catch (error) {
             console.error('Error creating booking:', error);
-            setError('Failed to create booking. Please try again later.');
+            setError(editingBooking ? 'Failed to update booking. Please try again later.' : 'Failed to create booking. Please try again later.');
         } finally {
             setLoading(false);
         }
@@ -208,14 +252,36 @@ const BookingPage: React.FC = () => {
                 ) : bookings.length === 0 ? (
                     <p>No bookings found.</p>
                 ) : (
-                    bookings.map((booking) => (
-                        <div key={booking.id} className="booking-card">
-                            <h4>{booking.service_type}</h4>
-                            <p><strong>Name:</strong> {booking.customer_name}</p>
-                            <p><strong>Date:</strong> {formatDate(booking.booking_datetime)}</p>
-                            <p><strong>Contact:</strong> {booking.contact_info}</p>
-                        </div>
-                    ))
+                    <div className="booking-cards">
+                        {bookings.map((booking) => (
+                            <div key={booking.id} className="booking-card">
+                                <div className="booking-card-header">
+                                    <h4>{booking.service_type}</h4>
+                                    <div className="booking-card-actions">
+                                        <button
+                                            className="edit-btn"
+                                            onClick={() => handleEdit(booking)}
+                                            title="Edit booking"
+                                        >
+                                            <i className="bi bi-pencil"></i>
+                                        </button>
+                                        <button
+                                            className="delete-btn"
+                                            onClick={() => handleDelete(booking.id!)}
+                                            title="Delete booking"
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="booking-card-body">
+                                    <p><strong>Name:</strong> {booking.customer_name}</p>
+                                    <p><strong>Date:</strong> {formatDate(booking.booking_datetime)}</p>
+                                    <p><strong>Contact:</strong> {booking.contact_info}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
         </div>
