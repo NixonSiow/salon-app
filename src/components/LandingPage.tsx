@@ -59,7 +59,7 @@ const LandingPage: React.FC = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="ms-auto">
                             <Nav.Link href="#home" className="text-light">HOME</Nav.Link>
-                            <Nav.Link href="#offers" className="text-light">OFFERS</Nav.Link>
+                            <Link to="/offers" className="nav-link text-light">OFFERS</Link>
                             <Link to="/gallery" className="nav-link text-light">GALLERY</Link>
                             <Link to="/services" className="nav-link text-light">SERVICES</Link>
                             <Link to="/locations" className="nav-link text-light">LOCATIONS</Link>
