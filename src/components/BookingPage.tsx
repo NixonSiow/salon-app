@@ -59,7 +59,11 @@ const BookingPage: React.FC = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
-            setBookings(data);
+            // Sort bookings by date and time
+            const sortedBookings = data.sort((a: Booking, b: Booking) => {
+                return new Date(a.booking_datetime).getTime() - new Date(b.booking_datetime).getTime();
+            });
+            setBookings(sortedBookings);
         } catch (error) {
             console.error('Error fetching bookings:', error);
             setError('Failed to fetch bookings. Please try again later.');

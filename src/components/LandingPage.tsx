@@ -99,7 +99,7 @@ const LandingPage: React.FC = () => {
                                     className="text-light user-icon-btn"
                                     onClick={handleShow}
                                 >
-                                    <i className="bi bi-person-circle"></i> Login
+                                    <i className="bi bi-person-circle"></i> Admin
                                 </Button>
                             )}
                         </Nav>
