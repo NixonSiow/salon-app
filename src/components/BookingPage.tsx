@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
+import { ENDPOINTS } from '../config/api';
 import './BookingPage.css';
 
 interface Booking {
@@ -52,7 +53,7 @@ const BookingPage: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('YOUR_REPLIT_API_URL/api/bookings');
+            const response = await fetch(ENDPOINTS.BOOKINGS);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -71,8 +72,9 @@ const BookingPage: React.FC = () => {
         setLoading(true);
         setError(null);
         setSuccess(null);
+        console.log('Submitting to endpoint:', ENDPOINTS.BOOKINGS);
         try {
-            const response = await fetch('YOUR_REPLIT_API_URL/api/bookings', {
+            const response = await fetch(ENDPOINTS.BOOKINGS, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,6 +83,7 @@ const BookingPage: React.FC = () => {
             });
 
             if (!response.ok) {
+                console.error('Response not OK:', response.status, response.statusText);
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
@@ -199,7 +202,7 @@ const BookingPage: React.FC = () => {
             </form>
 
             <div className="bookings-list">
-                <h3>Your Bookings</h3>
+                <h3>Bookings</h3>
                 {loading ? (
                     <p>Loading bookings...</p>
                 ) : bookings.length === 0 ? (
