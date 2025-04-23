@@ -197,7 +197,7 @@ const BookingPage: React.FC = () => {
                         value={formData.customer_name}
                         onChange={handleChange}
                         required
-                        placeholder="Enter your full name"
+                        placeholder="Enter your full name."
                     />
                 </div>
 
