@@ -4,6 +4,8 @@ import { storage } from '../firebase';
 import { ref, getDownloadURL, listAll } from 'firebase/storage';
 import { Link } from 'react-router-dom';
 import './Gallery.css';
+import { uploadBytes } from 'firebase/storage';
+
 
 const Gallery: React.FC = () => {
     const [images, setImages] = useState<string[]>([]);
@@ -74,6 +76,21 @@ const Gallery: React.FC = () => {
         window.location.reload();
     };
 
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const fileRef = ref(storage, `gallery/${file.name}`);
+            await uploadBytes(fileRef, file);
+            const url = await getDownloadURL(fileRef);
+            setImages(prev => [url, ...prev]);
+        } catch (err) {
+            console.error('Upload failed:', err);
+            alert('Image upload failed. Please try again.');
+        }
+    };
+
     return (
         <div className="gallery-page">
             <div className="home-button-container">
@@ -89,6 +106,22 @@ const Gallery: React.FC = () => {
             </div>
             <Container className="py-5">
                 <h1 className="text-center mb-5">Our Gallery</h1>
+
+                <div className="text-center mb-4">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        style={{ display: 'none' }}
+                        id="imageUpload"
+                    />
+                    <label htmlFor="imageUpload">
+                        <Button as="span" variant="success">
+                            Add Picture
+                        </Button>
+                    </label>
+                </div>
+
 
                 {loading ? (
                     <div className="text-center">
